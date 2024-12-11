@@ -1,3 +1,4 @@
 # Symfony
 /vendor/
 /var/
+.idea
