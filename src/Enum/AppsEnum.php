@@ -6,8 +6,17 @@ namespace App\Enum;
 
 enum AppsEnum: string
 {
-    case BACKOFFICE = 'backoffice';
-    case FRONTOFFICE = 'frontofffice';
-    case TUNNEL = 'tunnel';
-}
+    use EnumToArrayTrait;
 
+    case BACKOFFICE = 'backoffice';
+    case FRONTOFFICE = 'frontoffice';
+    case TUNNEL = 'tunnel';
+
+    /**
+     * @return string[]|int[]|float[]
+     */
+    public static function getSupportedApps(): array
+    {
+        return [self::BACKOFFICE];
+    }
+}
