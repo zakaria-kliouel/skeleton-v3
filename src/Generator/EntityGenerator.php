@@ -3,21 +3,22 @@
 namespace App\Generator;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\MakerBundle\Generator;
+use Symfony\Bundle\MakerBundle\Generator as MakerGenerator;
 use Symfony\Bundle\MakerBundle\Util\ClassSourceManipulator;
+use Generator;
 
 class EntityGenerator implements GeneratorInterface
 {
-    private Generator $generator;
+    private MakerGenerator $generator;
     private LoggerInterface $logger;
 
     public function __construct(
-        ?Generator $generator = null,
+        ?MakerGenerator $generator = null,
         LoggerInterface $logger,
     ) {
         if (null === $generator) {
             @trigger_error(\sprintf('Passing a "%s" instance as 4th argument is mandatory since version 1.5.', Generator::class), \E_USER_DEPRECATED);
-            $this->generator = new Generator($fileManager, 'App\\');
+            $this->generator = new MakerGenerator($fileManager, 'App\\');
         } else {
             $this->generator = $generator;
         }
@@ -28,12 +29,15 @@ class EntityGenerator implements GeneratorInterface
         return 1;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function generate(
         array $apps,
         string $entity,
         array $properties,
         ?bool $dryRun,
-    ):void {
+    ): Generator {
         $entityClassDetails = $this->generator->createClassNameDetails(
             $entity,
             'Entity\\'
@@ -54,6 +58,8 @@ class EntityGenerator implements GeneratorInterface
         $manipulator = $this->createClassManipulator($entityPath, $io, $overwrite);
 
         $generator->writeChanges();
+
+        yield ['type' => 'success', 'message' => $entity.'Entity created GG !'];
     }
     /** @return string[] */
     private function getPropertyNames(string $class): array

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Executor;
 
+use App\Enum\AppsEnum;
 use App\Generator\GeneratorInterface;
 use Generator;
 
@@ -16,7 +17,10 @@ class BuildEntityExecutor
         private iterable $generators,
     ) {
     }
+
     /**
+     * @param AppsEnum[] $apps
+     * @param mixed[] $properties
      *
      * @return Generator<mixed>
      */
@@ -25,9 +29,9 @@ class BuildEntityExecutor
         string $entity,
         array $properties,
         ?bool $dryRun,
-    ): void {
+    ): Generator {
         foreach ($this->generators as $generator) {
-            $generator->generate($apps, $entity, $properties, $dryRun);
+            yield from $generator->generate($apps, $entity, $properties, $dryRun);
         }
     }
 }
