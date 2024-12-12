@@ -5,13 +5,22 @@ declare(strict_types=1);
 namespace App\Executor;
 
 use App\Enum\AppsEnum;
+use App\Generator\GeneratorInterface;
 use Generator;
 
 class BuildEntityExecutor
 {
     /**
+     * @param iterable<GeneratorInterface> $generators
+     */
+    public function __construct(
+        private iterable $generators,
+    ) {
+    }
+
+    /**
      * @param AppsEnum[] $apps
-     * @param mixed[]    $properties
+     * @param mixed[] $properties
      *
      * @return Generator<mixed>
      */
@@ -21,7 +30,8 @@ class BuildEntityExecutor
         array $properties,
         ?bool $dryRun,
     ): Generator {
-
-        yield ['type' => 'success', 'message' => $entity.' files created GG !'];
+        foreach ($this->generators as $generator) {
+            yield from $generator->generate($apps, $entity, $properties, $dryRun);
+        }
     }
 }
