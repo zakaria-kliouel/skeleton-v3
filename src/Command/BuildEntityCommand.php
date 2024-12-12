@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Enum\AppsEnum;
+use App\Enum\DatabaseEnum;
+use App\Enum\JoinColumnEnum;
 use App\Executor\BuildEntityExecutor;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -11,6 +14,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validation;
 use Throwable;
 
 
@@ -37,8 +42,10 @@ class BuildEntityCommand extends Command
           }
     }';
 
+    private readonly SymfonyStyle $io;
+
     /**
-     * @var string[]
+     * @var AppsEnum[]
      */
     private array $apps;
 
@@ -61,7 +68,7 @@ class BuildEntityCommand extends Command
             'apps',
             '-a',
             InputOption::VALUE_REQUIRED,
-            'Application list separated by comma',
+            'Application list (backoffice, frontoffice, tunnel) separated by comma.',
             'backoffice',
         )
         ->addOption(
@@ -86,28 +93,121 @@ class BuildEntityCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
+        $this->io = new SymfonyStyle($input, $output);
         $this->dryRun = $input->getOption('dry-run');
-        $this->apps = explode(',',trim($input->getOption('apps')));
+        $this->apps = array_map(fn($app): AppsEnum => AppsEnum::from($app), explode(',',trim($input->getOption('apps'))));
         $this->entity = $input->getOption('entity');
         $this->properties = json_decode($input->getOption('properties'), true);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $code = self::SUCCESS;
+        if (!$this->validateProperties()) {
+            $this->io->error('Properties validation failed');
+            return self::FAILURE;
+        }
+
+        if ($this->apps !== ($supportedApps = AppsEnum::getSupportedApps())) {
+            $this->io->error('Only : '.implode(',', array_column($supportedApps, 'value')).' apps supported.');
+            return self::FAILURE;
+
+        }
 
         try {
             foreach ($this->executor->execute($this->apps, $this->entity, $this->properties, $this->dryRun) as $result)
             {
-                $io->{$result['type']}($result['message']);
+                $this->io->{$result['type']}($result['message']);
             }
         } catch (Throwable $e) {
             $message = sprintf('%s On file : %s : %d', $e->getMessage(), $e->getFile(), $e->getLine());
             $code = self::FAILURE;
-            $io->error($message);
+            $this->io->error($message);
         }
 
         return $code;
     }
+
+    private function validateProperties(): bool
+    {
+        $validator = Validation::createValidator();
+
+        $this->io->title('Properties Validation');
+
+        $constraint = new Assert\Collection([
+            'isIdentifier' => new Assert\Required([
+                new Assert\Type('boolean'),
+            ]),
+            'databaseColumnName' => new Assert\Required([
+                new Assert\Type('string'),
+            ]),
+            'nullable' => new Assert\Required([
+                new Assert\Type('boolean'),
+            ]),
+            'type' => new Assert\Required([
+                new Assert\Type('string'),
+            ]),
+            'defaultValue' => new Assert\Optional([
+                new Assert\Type('string'),
+            ]),
+            'collectionType' => new Assert\Optional([
+                new Assert\Type('string')
+            ]),
+            'database' => new Assert\Required([
+                new Assert\Choice(
+                    options: $options = DatabaseEnum::getValues(),
+                    message: 'The value you selected is not a valid choice. Expected : '. implode(',', $options),
+                )
+            ]),
+            'joinColumn' => new Assert\Optional([
+                new Assert\Collection([
+                    'type' => new Assert\Required([
+                        new Assert\Choice(
+                            options: $options = JoinColumnEnum::getValues(),
+                            message: 'The value you selected is not a valid choice. Expected : '. implode(',', $options),
+                        )
+                    ]),
+                    'targetEntity' => new Assert\Required([
+                        new Assert\Type('string'),
+                    ]),
+                    'mappedBy' => new Assert\Optional([
+                        new Assert\Type('string'),
+                    ]),
+                    'referencedColumnName' => new Assert\Optional([
+                        new Assert\Type('string'),
+                    ]),
+                    'cascade' => new Assert\Optional([
+                        new Assert\Type('string'),
+                    ]),
+                    'inversedBy' => new Assert\Optional([
+                        new Assert\Type('string'),
+                    ]),
+                ]),
+
+            ]),
+        ]);
+
+        foreach($this->properties as $propertyName => $property) {
+            $this->io->section('Start validate '.$propertyName);
+            $violations = $validator->validate($property, $constraint);
+            if (0 === $violations->count()) {
+                $this->io->info('Validation of '.$propertyName.' sucessfull.');
+            } else {
+                $errors = [];
+                foreach ($violations as $violation) {
+                    $errors[] = [
+                        $violation->getPropertyPath(),
+                        $violation->getMessage(),
+                    ];
+                }
+                $this->io->table(['Property', 'error'], $errors);
+
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
 }
