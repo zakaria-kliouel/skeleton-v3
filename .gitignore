@@ -1,7 +1,7 @@
 # Symfony
 /vendor/
 /var/
-.idea
+
 ###> symfony/phpunit-bridge ###
 .phpunit.result.cache
 /phpunit.xml
@@ -11,3 +11,6 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+# Idea files
+.idea/

@@ -5,9 +5,12 @@ DOCKER_COMP = docker compose
 PHP_CONT = $(DOCKER_COMP) exec php
 
 # Executables
-PHP      = $(PHP_CONT) php
+PHP = $(PHP_CONT) php
 COMPOSER = $(PHP_CONT) composer
-SYMFONY  = $(PHP) bin/console
+SYMFONY = $(PHP) bin/console
+
+# Vars
+XDEBUG_PARAMS = -e XDEBUG_MODE=debug -e XDEBUG_SESSION=1 -e PHP_IDE_CONFIG="serverName=symfony"
 
 # Misc
 .DEFAULT_GOAL = help
@@ -38,9 +41,13 @@ sh: ## Connect to the FrankenPHP container
 bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
 	@$(PHP_CONT) bash
 
-test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
+phpunit: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
 	@$(eval c ?=)
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+
+phpunit-xdebug: ## Start tests with phpunit with xdebug, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
+	@$(eval c ?=)
+	@$(DOCKER_COMP) exec -e APP_ENV=test $(XDEBUG_PARAMS) php bin/phpunit $(c)
 
 
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
@@ -56,6 +63,10 @@ vendor: composer
 sf: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
 	@$(eval c ?=)
 	@$(SYMFONY) $(c)
+
+sf-xdebug: ## List all Symfony commands or pass the parameter "c=" to run a given command, example: make sf c=about
+	@$(eval c ?=)
+	@$(DOCKER_COMP) exec $(XDEBUG_PARAMS) php bin/console $(c)
 
 cc: c=c:c ## Clear the cache
 cc: sf
