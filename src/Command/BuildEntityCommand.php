@@ -24,13 +24,12 @@ class BuildEntityCommand extends Command
 {
     private $propertiesFormat = '{
           "propertyName": {
-            "isIdentifier": false, // bool (vérifier au moins une propriété id dans la conf
+            "isIdentifier": false, // bool 
             "databaseColumnName": "", // string
             "nullable": true, // bool
             "type": "", // string
             "defaultValue": "", // string
             "collectionType": "", // ?string (seulement si type = collection)
-            "database": "avanis", // enum avanis, avanis_v2, bi, sage
             "joinColumn": { // ?array
               "type": "",  // enum OneToOne, OneToMany, ManyToOne
               "targetEntity": "", // string
@@ -53,6 +52,8 @@ class BuildEntityCommand extends Command
 
     private string $entity;
 
+    private DatabaseEnum $database;
+
     /**
      * @var mixed[]
      */
@@ -73,7 +74,7 @@ class BuildEntityCommand extends Command
         )
         ->addOption(
             'dry-run',
-            '-d',
+            '-dry-run',
             InputOption::VALUE_NONE,
             'Only lists files that would be created.',
         )
@@ -82,6 +83,13 @@ class BuildEntityCommand extends Command
             '-en',
             InputOption::VALUE_REQUIRED,
             'Entity name without entity suffix',
+        )
+        ->addOption(
+            'database',
+            '-d',
+            InputOption::VALUE_OPTIONAL,
+            'Database name in :'.json_encode(DatabaseEnum::getValues()),
+            DatabaseEnum::AVANIS->value,
         )
         ->addOption(
             'properties',
@@ -98,6 +106,7 @@ class BuildEntityCommand extends Command
         $this->apps = array_map(fn($app): AppsEnum => AppsEnum::from($app), explode(',',trim($input->getOption('apps'))));
         $this->entity = $input->getOption('entity');
         $this->properties = json_decode($input->getOption('properties'), true);
+        $this->database = DatabaseEnum::from($input->getOption('database'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -152,12 +161,6 @@ class BuildEntityCommand extends Command
             ]),
             'collectionType' => new Assert\Optional([
                 new Assert\Type('string')
-            ]),
-            'database' => new Assert\Required([
-                new Assert\Choice(
-                    options: $options = DatabaseEnum::getValues(),
-                    message: 'The value you selected is not a valid choice. Expected : '. implode(',', $options),
-                )
             ]),
             'joinColumn' => new Assert\Optional([
                 new Assert\Collection([
