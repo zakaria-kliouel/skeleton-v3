@@ -1,0 +1,2 @@
+parameters:
+  public_dir: '%kernel.project_dir%/var/tests/public'
