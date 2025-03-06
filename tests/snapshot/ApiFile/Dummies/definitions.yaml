@@ -1,0 +1,18 @@
+paths:
+  '/api/dummies':
+    $ref: 'resources/Dummies/_index.yaml'
+  '/api/dummies/{id}':
+    $ref: 'resources/Dummies/{id}.yaml'
+
+components:
+  schemas:
+    Dummy.read:
+      $ref: 'schemas/Dummies/read.yaml#/Dummy'
+    Dummy.Collection.read:
+      $ref: 'schemas/Dummies/read.yaml#/Dummy.Collection'
+    Dummy.jsonld.read:
+      $ref: 'schemas/Dummies/read.yaml#/Dummy.jsonld'
+    Dummy.Collection.jsonld.read:
+      $ref: 'schemas/Dummies/read.yaml#/Dummy.Collection.jsonld'
+    Dummy.write:
+      $ref: 'schemas/Dummies/write.yaml#/Dummy'

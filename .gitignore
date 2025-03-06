@@ -14,3 +14,5 @@
 
 # Idea files
 .idea/
+
+.cache/
