@@ -37,8 +37,8 @@ services:
         arguments:
             - !tagged_iterator app.generator
 
-    App\Generator\EntityGenerator:
-        arguments:
-            - '@maker.generator'
+#    App\Generator\EntityGenerator:
+#        arguments:
+#            - '@maker.generator'
 
     Symfony\Component\String\Inflector\EnglishInflector: ~
