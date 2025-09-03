@@ -11,6 +11,9 @@ parameters:
         writeSchema: '%kernel.project_dir%/resources/templates/yaml/openApi/schemas/write.yaml'
         indexResource: '%kernel.project_dir%/resources/templates/yaml/openApi/resources/_index.yaml'
         idResource: '%kernel.project_dir%/resources/templates/yaml/openApi/resources/{id}.yaml'
+    api_platform_file_resources:
+        resource: '%kernel.project_dir%/resources/templates/yaml/apiPlatform/resources/Entity.yaml'
+        serialization: '%kernel.project_dir%/resources/templates/yaml/apiPlatform/serialization/Entity.yaml'
 
 services:
     # default configuration for services in *this* file
@@ -20,6 +23,7 @@ services:
         bind:
             string $publicPath: '%public_dir%'
             array $openApiFileResources: '%open_api_file_resources%'
+            array $apiPlatformFileResources: '%api_platform_file_resources%'
 
     _instanceof:
         App\Generator\GeneratorInterface:

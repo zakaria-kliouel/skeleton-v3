@@ -2,6 +2,7 @@
 
 namespace App\Generator;
 
+use App\Enum\DatabaseEnum;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\MakerBundle\Generator as MakerGenerator;
 use Symfony\Bundle\MakerBundle\Util\ClassSourceManipulator;
@@ -15,6 +16,7 @@ class EntityGenerator implements GeneratorInterface
      */
     public function generate(
         array $apps,
+        DatabaseEnum $database,
         string $entity,
         array $properties,
         ?bool $dryRun,

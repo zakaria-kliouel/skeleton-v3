@@ -6,26 +6,23 @@ namespace App\Tests\Generator;
 
 use App\Enum\AppsEnum;
 use App\Enum\DatabaseEnum;
-use App\Generator\ApiFileGenerator;
+use App\Generator\ApiPlatformFileGenerator;
 use Generator;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\String\Inflector\EnglishInflector;
 
-class ApiFileGeneratorTest extends KernelTestCase
+class ApiPlatformFileGeneratorTest extends KernelTestCase
 {
     private LoggerInterface $logger;
     private Filesystem $filesystem;
-
-    private EnglishInflector $inflector;
 
     private string $publicPath;
 
     /**
      * @var string[]
      */
-    private array $templates;
+    private array $apiPlatformTemplates;
 
     public function setUp(): void
     {
@@ -34,18 +31,16 @@ class ApiFileGeneratorTest extends KernelTestCase
         $this->publicPath = self::$kernel->getContainer()->getParameter('public_dir');
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->filesystem = new Filesystem();
-        $this->inflector = new EnglishInflector();
-        $this->templates = self::$kernel->getContainer()->getParameter('open_api_file_resources');
+        $this->apiPlatformTemplates = self::$kernel->getContainer()->getParameter('api_platform_file_resources');
     }
 
-    public function testGenerate(): void
+    public function testApiPlatformGenerate(): void
     {
-        $generator = new ApiFileGenerator(
+        $generator = new ApiPlatformFileGenerator(
             $this->logger,
             $this->filesystem,
-            $this->inflector,
             $this->publicPath,
-            $this->templates,
+            $this->apiPlatformTemplates,
         );
 
         $results = $generator->generate(
@@ -92,33 +87,18 @@ class ApiFileGeneratorTest extends KernelTestCase
         );
 
         $this->assertFileEquals(
-            '/app/tests/snapshot/ApiFile/Dummies/definitions.yaml',
-            $this->publicPath.'/backoffice/api/backoffice/definitions.yaml'
+            '/app/tests/snapshot/ApiFile/api_platform/resources/avanis_v1/Dummy.yaml',
+            $this->publicPath.'/backoffice/api/backoffice/api_platform/resources/avanis_v1/Dummy.yaml'
         );
 
         $this->assertFileEquals(
-            '/app/tests/snapshot/ApiFile/Dummies/schemas/read.yaml',
-            $this->publicPath.'/backoffice/api/backoffice/schemas/Dummies/read.yaml'
-        );
-
-        $this->assertFileEquals(
-            '/app/tests/snapshot/ApiFile/Dummies/schemas/write.yaml',
-            $this->publicPath.'/backoffice/api/backoffice/schemas/Dummies/write.yaml'
-        );
-
-        $this->assertFileEquals(
-            '/app/tests/snapshot/ApiFile/Dummies/resources/_index.yaml',
-            $this->publicPath.'/backoffice/api/backoffice/resources/Dummies/_index.yaml'
-        );
-
-        $this->assertFileEquals(
-            '/app/tests/snapshot/ApiFile/Dummies/resources/{id}.yaml',
-            $this->publicPath.'/backoffice/api/backoffice/resources/Dummies/{id}.yaml'
+            '/app/tests/snapshot/ApiFile/api_platform/serialization/avanis_v1/Dummy.yaml',
+            $this->publicPath.'/backoffice/api/backoffice/api_platform/serialization/avanis_v1/Dummy.yaml'
         );
     }
 
     public function testGetPriority(): void
     {
-        $this->assertSame(20, ApiFileGenerator::getPriority());
+        $this->assertSame(20, ApiPlatformFileGenerator::getPriority());
     }
 }

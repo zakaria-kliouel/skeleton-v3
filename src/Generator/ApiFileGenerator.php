@@ -2,7 +2,7 @@
 
 namespace App\Generator;
 
-use App\Enum\AppsEnum;
+use App\Enum\DatabaseEnum;
 use Psr\Log\LoggerInterface;
 use LogicException;
 use Generator;
@@ -31,6 +31,7 @@ class ApiFileGenerator implements GeneratorInterface
      */
     public function generate(
         array $apps,
+        DatabaseEnum $database,
         string $entity,
         array $properties,
         ?bool $dryRun,

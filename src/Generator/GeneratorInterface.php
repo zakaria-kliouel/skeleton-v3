@@ -3,6 +3,7 @@
 namespace App\Generator;
 
 use App\Enum\AppsEnum;
+use App\Enum\DatabaseEnum;
 use Generator;
 
 interface GeneratorInterface
@@ -15,6 +16,7 @@ interface GeneratorInterface
      */
     public function generate(
         array $apps,
+        DatabaseEnum $database,
         string $entity,
         array $properties,
         ?bool $dryRun,
