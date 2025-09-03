@@ -22,7 +22,8 @@ use Throwable;
 #[AsCommand(name: 'skeleton:build-entity')]
 class BuildEntityCommand extends Command
 {
-    private $propertiesFormat = '{
+    private $propertiesFormat = '
+    {
           "propertyName": {
             "isIdentifier": false, // bool 
             "databaseColumnName": "", // string
@@ -124,7 +125,7 @@ class BuildEntityCommand extends Command
         }
 
         try {
-            foreach ($this->executor->execute($this->apps, $this->entity, $this->properties, $this->dryRun) as $result)
+            foreach ($this->executor->execute($this->apps, $this->database, $this->entity, $this->properties, $this->dryRun) as $result)
             {
                 $this->io->{$result['type']}($result['message']);
             }

@@ -1,0 +1,18 @@
+paths:
+  '/api/{{entities}}':
+    $ref: 'resources/{{Entities}}/_index.yaml'
+  '/api/{{entities}}/{id}':
+    $ref: 'resources/{{Entities}}/{id}.yaml'
+
+components:
+  schemas:
+    {{Entity}}.read:
+      $ref: 'schemas/Dummies/read.yaml#/{{Entity}}'
+    {{Entity}}.Collection.read:
+      $ref: 'schemas/Dummies/read.yaml#/{{Entity}}.Collection'
+    {{Entity}}.jsonld.read:
+      $ref: 'schemas/Dummies/read.yaml#/{{Entity}}.jsonld'
+    {{Entity}}.Collection.jsonld.read:
+      $ref: 'schemas/Dummies/read.yaml#/{{Entity}}.Collection.jsonld'
+    {{Entity}}.write:
+      $ref: 'schemas/Dummies/write.yaml#/{{Entity}}'

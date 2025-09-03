@@ -1,0 +1,4 @@
+{{Entity}}:
+  type: object
+  deprecated: false
+  additionalProperties: false

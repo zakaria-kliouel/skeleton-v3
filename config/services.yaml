@@ -5,6 +5,15 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     public_dir: '%kernel.project_dir%/public'
+    open_api_file_resources:
+        definitions: '%kernel.project_dir%/resources/templates/yaml/openApi/definitions.yaml'
+        readSchema: '%kernel.project_dir%/resources/templates/yaml/openApi/schemas/read.yaml'
+        writeSchema: '%kernel.project_dir%/resources/templates/yaml/openApi/schemas/write.yaml'
+        indexResource: '%kernel.project_dir%/resources/templates/yaml/openApi/resources/_index.yaml'
+        idResource: '%kernel.project_dir%/resources/templates/yaml/openApi/resources/{id}.yaml'
+    api_platform_file_resources:
+        resource: '%kernel.project_dir%/resources/templates/yaml/apiPlatform/resources/Entity.yaml'
+        serialization: '%kernel.project_dir%/resources/templates/yaml/apiPlatform/serialization/Entity.yaml'
 
 services:
     # default configuration for services in *this* file
@@ -13,6 +22,9 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             string $publicPath: '%public_dir%'
+            array $openApiFileResources: '%open_api_file_resources%'
+            array $apiPlatformFileResources: '%api_platform_file_resources%'
+
     _instanceof:
         App\Generator\GeneratorInterface:
             tags: { name: 'app.generator', default_priority_method: getPriority }
@@ -29,9 +41,8 @@ services:
         arguments:
             - !tagged_iterator app.generator
 
-    App\Generator\EntityGenerator:
-        arguments:
-            - '@maker.generator'
+#    App\Generator\EntityGenerator:
+#        arguments:
+#            - '@maker.generator'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    Symfony\Component\String\Inflector\EnglishInflector: ~

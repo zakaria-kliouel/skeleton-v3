@@ -1,0 +1,12 @@
+resources:
+  Common\Entity\{{Database}}\{{Entity}}:
+    normalizationContext:
+      groups: [ 'read' ]
+    denormalizationContext:
+      groups: [ 'write' ]
+    operation:
+      ApiPlatform\Metadata\GetCollection: ~
+      ApiPlatform\Metadata\Get: ~
+      ApiPlatform\Metadata\Post: ~
+      ApiPlatform\Metadata\Patch: ~
+      ApiPlatform\Metadata\Delete: ~

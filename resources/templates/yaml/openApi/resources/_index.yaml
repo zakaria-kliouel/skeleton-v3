@@ -1,0 +1,52 @@
+get:
+  operationId: api_{{entities}}_get_collection
+  tags:
+    - {{Entity}}
+  200:
+    description: '{{Entity}} collection'
+    content:
+      application/ld+json:
+        schema:
+          $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.Collection.jsonld.read'
+      application/json:
+        schema:
+          $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.Collection.read'
+  403:
+    $ref: '../../definitions.yaml#/components/responses/403'
+
+post:
+  operationId: api_{{entities}}_id_post
+  tags:
+    - {{Entity}}
+  responses:
+    201:
+      description: '{{Entity}} resource created'
+      content:
+        application/ld+json:
+          schema:
+            $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.jsonld.read'
+        application/json:
+          schema:
+            $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.read'
+        multipart/form-data:
+          schema:
+            $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.read'
+      links: { }
+    400:
+      $ref: '../../definitions.yaml#/components/responses/400'
+    422:
+      $ref: '../../definitions.yaml#/components/responses/422'
+    404:
+      $ref: '../../definitions.yaml#/components/responses/404'
+  summary: 'Creates the {{Entity}} resource.'
+  description: 'Creates the {{Entity}} resource.'
+  requestBody:
+    description: 'The created {{Entity}} resource'
+    content:
+      application/json:
+        schema:
+          $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.write'
+      multipart/form-data:
+        schema:
+          $ref: '../../definitions.yaml#/components/schemas/{{Entity}}.write'
+    required: true

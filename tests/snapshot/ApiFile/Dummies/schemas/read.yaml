@@ -1,0 +1,43 @@
+Dummy:
+  type: object
+  properties:
+    id:
+      readOnly: true
+      type: integer
+    firstProperty:
+      type: string
+    secondProperty:
+      type: boolean
+    thirdProperty:
+      type: float
+  required:
+    - id
+    - firstProperty
+    - secondProperty
+Dummy.jsonld:
+  type: object
+  allOf:
+    - $ref: '../../definitions.yaml#/components/schemas/JsonLD.Item'
+    - $ref: '#/Dummy'
+Dummy.Collection:
+  type: array
+  items:
+    oneOf:
+      - $ref: '#/Dummy'
+Dummy.Collection.jsonld:
+  type: object
+  unevaluatedProperties: false
+  allOf:
+    - $ref: '../../definitions.yaml#/components/schemas/JsonLD.Collection'
+    - type: object
+  properties:
+    'hydra:member':
+      readOnly: true
+      type: array
+      items:
+        type: object
+        allOf:
+          - $ref: '../../definitions.yaml#/components/schemas/JsonLD'
+          - $ref: '#/Dummy'
+  required:
+    - 'hydra:member'

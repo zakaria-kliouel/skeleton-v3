@@ -1,0 +1,32 @@
+{{Entity}}:
+  type: object
+
+{{Entity}}.jsonld:
+  type: object
+  allOf:
+    - $ref: '../../definitions.yaml#/components/schemas/JsonLD.Item'
+    - $ref: '#/{{Entity}}'
+
+{{Entity}}.Collection:
+  type: array
+  items:
+    oneOf:
+      - $ref: '#/{{Entity}}'
+
+{{Entity}}.Collection.jsonld:
+  type: object
+  unevaluatedProperties: false
+  allOf:
+    - $ref: '../../definitions.yaml#/components/schemas/JsonLD.Collection'
+    - type: object
+  properties:
+    'hydra:member':
+      readOnly: true
+      type: array
+      items:
+        type: object
+        allOf:
+          - $ref: '../../definitions.yaml#/components/schemas/JsonLD'
+          - $ref: '#/{{Entity}}'
+  required:
+    - 'hydra:member'

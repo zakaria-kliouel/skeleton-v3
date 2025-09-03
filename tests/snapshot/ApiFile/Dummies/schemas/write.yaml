@@ -1,0 +1,15 @@
+Dummy:
+  type: object
+  deprecated: false
+  additionalProperties: false
+  properties:
+    firstProperty:
+      type: string
+      default: default
+    secondProperty:
+      type: boolean
+    thirdProperty:
+      type: float
+      default: 3.14
+  notRequired:
+    - thirdProperty

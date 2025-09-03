@@ -1,0 +1,10 @@
+Common\Entity\AvanisV1\Dummy:
+  attributes:
+    id:
+      groups: [ 'read' ]
+    firstProperty:
+      groups: [ 'read', 'write' ]
+    secondProperty:
+      groups: [ 'read', 'write' ]
+    thirdProperty:
+      groups: [ 'read', 'write' ]

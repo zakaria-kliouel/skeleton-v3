@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Executor;
 
 use App\Enum\AppsEnum;
+use App\Enum\DatabaseEnum;
 use App\Generator\GeneratorInterface;
 use Generator;
 use Symfony\Component\Filesystem\Filesystem;
@@ -30,6 +31,7 @@ class BuildEntityExecutor
      */
     public function execute(
         array $apps,
+        DatabaseEnum $database,
         string $entity,
         array $properties,
         ?bool $dryRun,
@@ -44,7 +46,7 @@ class BuildEntityExecutor
         }
 
         foreach ($this->generators as $generator) {
-            yield from $generator->generate($apps, $entity, $properties, $dryRun);
+            yield from $generator->generate($apps, $database, $entity, $properties, $dryRun);
         }
     }
 }
