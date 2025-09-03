@@ -70,6 +70,7 @@
         }
     },
     "require-dev": {
+        "phpstan/phpstan": "*",
         "phpunit/phpunit": "^11.5.11",
         "squizlabs/php_codesniffer": "*",
         "symfony/maker-bundle": "^1.62.1",

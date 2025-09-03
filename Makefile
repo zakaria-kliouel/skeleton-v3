@@ -53,6 +53,12 @@ phpcs: ## Run phpcs for project, pass the parameters "c=" to add option to phpcs
 	@$(eval c ?=)
 	@$(PHP_CONT) vendor/bin/phpcs $(c)
 
+phpstan: ## Run phpstan for project, pass the parameters "c=" to add option to phpstan
+	@$(eval c ?=)
+	@$(PHP_CONT) vendor/bin/phpstan $(c)
+
+ci: phpcs phpstan
+
 ## —— Composer 🧙 ——————————————————————————————————————————————————————————————
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'
 	@$(eval c ?=)
