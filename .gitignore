@@ -8,9 +8,19 @@
 ###< symfony/phpunit-bridge ###
 
 ###> phpunit/phpunit ###
+/.cache
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 
 # Idea files
 .idea/
+
+###> squizlabs/php_codesniffer ###
+/.phpcs-cache
+/phpcs.xml
+###< squizlabs/php_codesniffer ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
